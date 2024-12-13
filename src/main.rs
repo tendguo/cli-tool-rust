@@ -1,14 +1,18 @@
-use std::process;
-
 use clap::Parser;
 use handle_csv::read_csv;
-use handle_csv::Args;
+use handle_csv::{Opts, SubCommand};
 
-fn main() {
-    let args: Args = Args::parse();
+fn main() -> anyhow::Result<()> {
+    let args: Opts = Opts::parse();
 
-    if let Err(err) = read_csv(&args.input, &args.output) {
-        println!("error running {}", err);
-        process::exit(1);
+    match args.cmd {
+        SubCommand::Csv(args) => {
+            let output = if let Some(output) = args.output {
+                output.clone()
+            } else {
+                format!("output.{}", args.format)
+            };
+            read_csv(&args.input, output, args.format)
+        }
     }
 }

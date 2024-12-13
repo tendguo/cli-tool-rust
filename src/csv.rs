@@ -1,16 +1,10 @@
-use std::{error::Error, fs};
+use std::fs;
 
 use serde_json::Value;
 
-#[derive(Debug, serde::Deserialize, serde::Serialize)]
-pub struct Record {
-    city: String,
-    region: String,
-    country: String,
-    population: Option<u64>,
-}
+use crate::input::OutputFormat;
 
-pub fn read_csv(input: &str, output: &str) -> Result<(), Box<dyn Error>> {
+pub fn read_csv(input: &str, output: String, format: OutputFormat) -> Result<(), anyhow::Error> {
     let mut rdr = csv::Reader::from_path(input)?;
     let mut records = Vec::with_capacity(128);
     let headers = rdr.headers()?.clone();
@@ -19,7 +13,10 @@ pub fn read_csv(input: &str, output: &str) -> Result<(), Box<dyn Error>> {
         let json_value = headers.iter().zip(record.iter()).collect::<Value>();
         records.push(json_value);
     }
-    let json = serde_json::to_string_pretty(&records)?;
-    fs::write(output, json)?;
+    let content = match format {
+        OutputFormat::Json => serde_json::to_string_pretty(&records)?,
+        OutputFormat::Yaml => serde_json::to_string(&records)?,
+    };
+    fs::write(output, content)?;
     Ok(())
 }
