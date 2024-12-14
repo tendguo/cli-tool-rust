@@ -9,3 +9,9 @@ git commit -m "first commit"
 git branch -M main
 git remote add origin https://github.com/tendguo/test.git
 git push -u origin main
+
+## cli-csv
+cargo run -- csv -i assets/smallpop.csv
+cargo run -- csv -i assets/smallpop.csv --format yaml
+## generate password
+cargo run -- gen_pass

@@ -41,6 +41,7 @@ pub fn process_genpassword(
         let c = chars.choose(&mut rng).expect("chars won't empty");
         password.push(*c);
     }
+    password.shuffle(&mut rng);
     let password = String::from_utf8(password)?;
     println!("{}", password);
 
