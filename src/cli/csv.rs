@@ -1,7 +1,8 @@
 use crate::cli::OutputFormat;
 use clap::Parser;
-use std::{fmt, path::Path, str::FromStr};
+use std::{fmt, str::FromStr};
 
+use crate::cli::verify_input_text;
 #[derive(Parser, Debug)]
 #[command(version, about, long_about = None)]
 pub struct CsvArgs {
@@ -21,14 +22,6 @@ pub struct CsvArgs {
 
     #[arg(short, long, value_parser = parse_format, default_value = "json")]
     pub format: OutputFormat,
-}
-
-fn verify_input_text(file_name: &str) -> Result<String, &'static str> {
-    if Path::new(file_name).exists() {
-        Ok(file_name.into())
-    } else {
-        Err("THE FILE NAME IS NOT EXISTS")
-    }
 }
 
 fn parse_format(format: &str) -> Result<OutputFormat, anyhow::Error> {
