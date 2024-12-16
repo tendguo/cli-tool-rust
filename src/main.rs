@@ -1,5 +1,6 @@
 use clap::Parser;
-use handle_csv::{process_genpassword, read_csv};
+use handle_csv::{decode_base64, encode_base64, process_genpassword, read_csv, Base64Subcommand};
+
 use handle_csv::{Opts, SubCommand};
 
 fn main() {
@@ -23,5 +24,13 @@ fn main() {
                 args.symbol,
             );
         }
+        SubCommand::Base64(args) => match args {
+            Base64Subcommand::Encode(opts) => {
+                let _ = encode_base64(&opts.input, opts.format);
+            }
+            Base64Subcommand::Decode(opts) => {
+                let _ = decode_base64(&opts.input, opts.format);
+            }
+        },
     }
 }

@@ -1,14 +1,13 @@
 mod cli;
-mod input;
 mod process;
 
+pub use cli::Base64Subcommand;
 pub use cli::CsvArgs;
 pub use cli::GenArgs;
-pub use input::Opts;
+pub use cli::Opts;
+pub use cli::SubCommand;
 
-pub use input::SubCommand;
-pub use process::process_genpassword;
-pub use process::read_csv;
+pub use process::{decode_base64, encode_base64, process_genpassword, read_csv};
 #[cfg(test)]
 mod tests {
     #[test]
