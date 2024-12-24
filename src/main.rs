@@ -2,12 +2,14 @@ use anyhow::Ok;
 use clap::Parser;
 use handle_csv::{
     decode_base64, encode_base64, get_content, process_generate_key, process_genpassword,
-    process_sign_text, process_sign_verify, read_csv, Base64Subcommand,
+    process_http_serve, process_sign_text, process_sign_verify, read_csv, Base64Subcommand,
+    ServeSubCommand,
 };
 
 use handle_csv::{Opts, SubCommand, TextSubcommand};
 
-fn main() -> Result<(), anyhow::Error> {
+#[tokio::main]
+async fn main() -> Result<(), anyhow::Error> {
     let args: Opts = Opts::parse();
 
     match args.cmd {
@@ -54,6 +56,11 @@ fn main() -> Result<(), anyhow::Error> {
                 } else {
                     println!("⚠ Signature not verified");
                 }
+            }
+        },
+        SubCommand::HTTPServer(args) => match args {
+            ServeSubCommand::Serve(opts) => {
+                let _ = process_http_serve(opts.dir, opts.port).await;
             }
         },
     }

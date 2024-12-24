@@ -1,12 +1,9 @@
-use std::{
-    path::{Path, PathBuf},
-    str::FromStr,
-};
+use std::{path::PathBuf, str::FromStr};
 
 use anyhow::Ok;
 use clap::Parser;
 
-use super::verify_input_text;
+use super::{verify_input_path, verify_input_text};
 
 #[derive(Debug, Parser)]
 pub enum TextSubcommand {
@@ -55,15 +52,6 @@ pub struct VerifierOpts {
     pub key: String,
     #[arg(long)]
     pub sig: String,
-}
-
-fn verify_input_path(path: &str) -> Result<PathBuf, anyhow::Error> {
-    let p = Path::new(path);
-    if p.exists() && p.is_dir() {
-        Ok(path.into())
-    } else {
-        Err(anyhow::anyhow!("Path does not exist or is not a directory"))
-    }
 }
 
 fn parse_format_text(format: &str) -> Result<TextSignFormat, anyhow::Error> {

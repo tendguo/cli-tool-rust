@@ -2,12 +2,14 @@ use std::{fs::File, io::Read};
 mod base64;
 mod csv;
 mod generate_password;
+mod http_serve;
 mod text;
 
 use anyhow::Ok;
 pub use base64::{decode_base64, encode_base64};
 pub use csv::read_csv;
 pub use generate_password::process_genpassword;
+pub use http_serve::process_http_serve;
 pub use text::{process_generate_key, process_sign_text, process_sign_verify};
 
 pub fn get_reader(input: &str) -> anyhow::Result<Box<dyn Read>> {
