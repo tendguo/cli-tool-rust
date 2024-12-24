@@ -3,9 +3,13 @@ use std::path::Path;
 mod base64;
 mod csv;
 mod genpass;
+mod text;
+
+pub use crate::cli::text::TextSubcommand;
 pub use base64::{Base64Format, Base64Subcommand};
 pub use csv::CsvArgs;
 pub use genpass::{GenArgs, OutputFormat};
+pub use text::TextSignFormat;
 
 use clap::Parser;
 #[derive(Debug, Parser)]
@@ -23,6 +27,8 @@ pub enum SubCommand {
     GenPass(GenArgs),
     #[command(subcommand, name = "base64", about = "process base64 encode/decode")]
     Base64(Base64Subcommand),
+    #[command(subcommand, name = "text", about = "handle text")]
+    Text(TextSubcommand),
 }
 
 pub fn verify_input_text(file_name: &str) -> Result<String, &'static str> {

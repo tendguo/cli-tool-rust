@@ -12,7 +12,7 @@ pub fn process_genpassword(
     lower: bool,
     number: bool,
     symbol: bool,
-) -> Result<(), anyhow::Error> {
+) -> Result<String, anyhow::Error> {
     let mut rng = rand::thread_rng();
     let mut password: Vec<u8> = vec![];
     let mut chars: Vec<u8> = vec![];
@@ -48,5 +48,5 @@ pub fn process_genpassword(
     let estimate = zxcvbn(&password, &[]);
     eprintln!("{}", estimate.score()); // 3
 
-    Ok(())
+    Ok(password)
 }
