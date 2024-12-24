@@ -1,14 +1,16 @@
-use std::path::Path;
+use std::path::{Path, PathBuf};
 
 mod base64;
 mod csv;
 mod genpass;
+mod http;
 mod text;
 
 pub use crate::cli::text::TextSubcommand;
 pub use base64::{Base64Format, Base64Subcommand};
 pub use csv::CsvArgs;
 pub use genpass::{GenArgs, OutputFormat};
+pub use http::ServeSubCommand;
 pub use text::TextSignFormat;
 
 use clap::Parser;
@@ -29,6 +31,8 @@ pub enum SubCommand {
     Base64(Base64Subcommand),
     #[command(subcommand, name = "text", about = "handle text")]
     Text(TextSubcommand),
+    #[command(subcommand, name = "http", about = "handle text")]
+    HTTPServer(ServeSubCommand),
 }
 
 pub fn verify_input_text(file_name: &str) -> Result<String, &'static str> {
@@ -36,5 +40,14 @@ pub fn verify_input_text(file_name: &str) -> Result<String, &'static str> {
         Ok(file_name.into())
     } else {
         Err("THE FILE NAME IS NOT EXISTS")
+    }
+}
+
+pub fn verify_input_path(path: &str) -> Result<PathBuf, anyhow::Error> {
+    let p = Path::new(path);
+    if p.exists() && p.is_dir() {
+        Ok(path.into())
+    } else {
+        Err(anyhow::anyhow!("Path does not exist or is not a directory"))
     }
 }
