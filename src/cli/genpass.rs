@@ -1,4 +1,7 @@
+use anyhow::Ok;
 use clap::Parser;
+
+use crate::CmdExecutor;
 
 #[derive(Parser, Debug)]
 #[command(version, about, long_about = None)]
@@ -25,4 +28,17 @@ pub struct GenArgs {
 pub enum OutputFormat {
     Json,
     Yaml,
+}
+
+impl CmdExecutor for GenArgs {
+    async fn executor(self) -> anyhow::Result<()> {
+        let _ = crate::process_genpassword(
+            self.length,
+            self.uppercase,
+            self.lowercase,
+            self.number,
+            self.symbol,
+        );
+        Ok(())
+    }
 }

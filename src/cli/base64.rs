@@ -4,6 +4,7 @@ use enum_dispatch::enum_dispatch;
 use std::str::FromStr;
 
 use crate::cli::verify_input_text;
+use crate::CmdExecutor;
 
 #[derive(Debug, Parser)]
 #[enum_dispatch(CmdExecutor)]
@@ -62,5 +63,17 @@ impl FromStr for Base64Format {
             "urlsafe" => Ok(Base64Format::UrlSafe),
             _ => Err(anyhow::anyhow!("Invalid format")),
         }
+    }
+}
+
+impl CmdExecutor for Base64EncodeOpts {
+    async fn executor(self) -> anyhow::Result<()> {
+        crate::encode_base64(&self.input, self.format)
+    }
+}
+
+impl CmdExecutor for Base64DecodeOpts {
+    async fn executor(self) -> anyhow::Result<()> {
+        crate::decode_base64(&self.input, self.format)
     }
 }

@@ -1,15 +1,14 @@
 mod cli;
 mod process;
 
-pub use cli::Base64Subcommand;
-pub use cli::CsvArgs;
-pub use cli::GenArgs;
-pub use cli::Opts;
-pub use cli::ServeSubCommand;
-pub use cli::SubCommand;
-pub use cli::TextSubcommand;
+pub use cli::*;
+pub use process::*;
 
-pub use process::{
-    decode_base64, encode_base64, get_content, process_generate_key, process_genpassword,
-    process_http_serve, process_sign_text, process_sign_verify, read_csv,
-};
+use enum_dispatch::enum_dispatch;
+
+/// https://blog.rust-lang.org/2023/12/21/async-fn-rpit-in-traits.html
+#[trait_variant::make(HttpService: Send)]
+#[enum_dispatch]
+pub trait CmdExecutor {
+    async fn executor(self) -> anyhow::Result<()>;
+}

@@ -36,3 +36,6 @@ cargo run -- text sign --message encryption/message.txt --key encryption/ed25519
 cargo run -- text verify --format blake3 --message encryption/message.txt --key encryption/blake3.txt --sig Ey37iAVJo41c4fBCyCJpyXopC8l_I93MEGwUxAI_8UY
 ## ed25519
 cargo run -- text verify --format ed25519 --message encryption/message.txt --key encryption/ed25519.sk --sig Ey37iAVJo41c4fBCyCJpyXopC8l_I93MEGwUxAI_8UY
+
+# start http server
+cargo run -- http serve
