@@ -5,7 +5,6 @@ mod generate_password;
 mod http_serve;
 mod text;
 
-use anyhow::Ok;
 pub use base64::{decode_base64, encode_base64};
 pub use csv::read_csv;
 pub use generate_password::process_genpassword;

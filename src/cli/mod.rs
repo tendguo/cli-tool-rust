@@ -6,14 +6,10 @@ mod genpass;
 mod http;
 mod text;
 
-pub use crate::cli::text::TextSubcommand;
-pub use base64::{Base64Format, Base64Subcommand};
-pub use csv::CsvArgs;
-pub use genpass::{GenArgs, OutputFormat};
-pub use http::ServeSubCommand;
-pub use text::TextSignFormat;
+pub use self::{base64::*, csv::*, genpass::*, http::*, text::*};
 
 use clap::Parser;
+use enum_dispatch::enum_dispatch;
 #[derive(Debug, Parser)]
 #[command(name = "rcli", version, author, about, long_about = None)]
 pub struct Opts {
@@ -22,6 +18,7 @@ pub struct Opts {
 }
 
 #[derive(Debug, Parser)]
+#[enum_dispatch(CmdExecutor)]
 pub enum SubCommand {
     #[command(name = "csv", about = "Show CSV, or convert CSV to other formats")]
     Csv(CsvArgs),

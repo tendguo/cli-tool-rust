@@ -1,4 +1,4 @@
-use crate::cli::OutputFormat;
+use crate::{cli::OutputFormat, CmdExecutor};
 use clap::Parser;
 use std::{fmt, str::FromStr};
 
@@ -52,5 +52,16 @@ impl FromStr for OutputFormat {
 impl fmt::Display for OutputFormat {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(f, "{}", Into::<&str>::into(*self))
+    }
+}
+
+impl CmdExecutor for CsvArgs {
+    async fn executor(self) -> anyhow::Result<()> {
+        let output = if let Some(output) = self.output {
+            output.clone()
+        } else {
+            format!("output.{}", self.format)
+        };
+        crate::read_csv(&self.input, output, self.format)
     }
 }

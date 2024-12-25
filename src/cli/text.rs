@@ -1,11 +1,15 @@
-use std::{path::PathBuf, str::FromStr};
+use std::{fs::File, io::Write, path::PathBuf, str::FromStr};
 
 use anyhow::Ok;
 use clap::Parser;
+use enum_dispatch::enum_dispatch;
+
+use crate::CmdExecutor;
 
 use super::{verify_input_path, verify_input_text};
 
 #[derive(Debug, Parser)]
+#[enum_dispatch(CmdExecutor)]
 pub enum TextSubcommand {
     #[command(name = "generate", about = "generate a key")]
     Generate(GenerateOpts),
@@ -75,5 +79,38 @@ impl From<TextSignFormat> for &'static str {
             TextSignFormat::Blake3 => "blake3",
             TextSignFormat::Ed25519 => "ed25519",
         }
+    }
+}
+
+impl CmdExecutor for GenerateOpts {
+    async fn executor(self) -> anyhow::Result<()> {
+        let key_map = crate::process_generate_key(self.format)?;
+        for (k, v) in key_map {
+            let mut file = File::create(self.path.join(k)).unwrap();
+            file.write_all(&v).unwrap();
+        }
+        Ok(())
+    }
+}
+
+impl CmdExecutor for SignerOpts {
+    async fn executor(self) -> anyhow::Result<()> {
+        let key = crate::get_content(&self.key)?;
+        let message = crate::get_content(&self.message)?;
+        crate::process_sign_text(self.format, &key, &message)
+    }
+}
+
+impl CmdExecutor for VerifierOpts {
+    async fn executor(self) -> anyhow::Result<()> {
+        let key = crate::get_content(&self.key)?;
+        let message = crate::get_content(&self.message)?;
+        let result = crate::process_sign_verify(self.format, &key, &self.sig, &message)?;
+        if result {
+            println!("✓ Signature verified");
+        } else {
+            println!("⚠ Signature not verified");
+        }
+        Ok(())
     }
 }

@@ -1,4 +1,4 @@
-use std::{collections::HashMap, fs::File, io::Write, path::PathBuf};
+use std::collections::HashMap;
 
 use base64::{engine::general_purpose::URL_SAFE_NO_PAD, Engine};
 use ed25519_dalek::{ed25519::signature::SignerMut, SigningKey, VerifyingKey};
@@ -113,16 +113,15 @@ impl Ed25519Verifier {
     }
 }
 
-pub fn process_generate_key(format: TextSignFormat, path: PathBuf) -> anyhow::Result<()> {
+pub fn process_generate_key(
+    format: TextSignFormat,
+) -> anyhow::Result<HashMap<&'static str, Vec<u8>>> {
     let key_map: HashMap<&str, Vec<u8>> = match format {
         TextSignFormat::Ed25519 => Ed25519Signer::generate()?,
         TextSignFormat::Blake3 => Blake3::generate()?,
     };
-    for (k, v) in key_map {
-        let mut file: File = File::create(path.join(k)).unwrap();
-        file.write_all(&v).unwrap();
-    }
-    Ok(())
+
+    Ok(key_map)
 }
 
 pub fn process_sign_text(format: TextSignFormat, key: &[u8], message: &[u8]) -> anyhow::Result<()> {
